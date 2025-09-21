@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Lucky Numbers Generator</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a237e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231a237e'/><text y='70' x='50' text-anchor='middle' font-size='60' fill='white'>🎲</text></svg>">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 50%, #5c6bc0 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(63, 81, 181, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: floatingBg 20s ease-in-out infinite;
+        }
+
+        @keyframes floatingBg {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ffd700, #ffeb3b, #ffd700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            color: #e8eaf6;
+        }
+
+        /* Number Display */
+        .number-display {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
+
+        .digits-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .digit-slot {
+            width: 45px;
+            height: 65px;
+            background: linear-gradient(145deg, #ffffff, #f5f5f5);
+            border-radius: 12px;
+            box-shadow: 
+                inset 0 2px 4px rgba(0,0,0,0.1),
+                0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .digit {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #1a237e;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .digit.spinning {
+            animation: digitSpin 0.2s ease-in-out;
+        }
+
+        @keyframes digitSpin {
+            0% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); color: #f44336; }
+            100% { transform: translateY(0px) scale(1); }
+        }
+
+        .result-display {
+            text-align: center;
+            margin-top: 15px;
+            min-height: 30px;
+        }
+
+        .result-number {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+
+        /* Control Buttons */
+        .controls {
+            animation: slideUp 0.8s ease-out 0.4s both;
+        }
+
+        .random-button {
+            width: 100%;
+            background: linear-gradient(135deg, #ff6b35, #f44336);
+            border: none;
+            border-radius: 20px;
+            padding: 18px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 20px;
+            box-shadow: 
+                0 6px 20px rgba(244, 67, 54, 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .random-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.5);
+        }
+
+        .random-button:active {
+            transform: translateY(0px);
+        }
+
+        .random-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .random-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .random-button:hover::before {
+            left: 100%;
+        }
+
+        .button-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Secondary Controls */
+        .secondary-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .secondary-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* History Section */
+        .history-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.8s ease-out 0.6s both;
+        }
+
+        .history-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #e8eaf6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        .history-number {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .history-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .digit-slot {
+                width: 40px;
+                height: 55px;
+            }
+
+            .digit {
+                font-size: 1.8rem;
+            }
+
+            .random-button {
+                padding: 15px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .digits-container {
+                gap: 5px;
+            }
+
+            .digit-slot {
+                width: 38px;
+                height: 50px;
+            }
+
+            .digit {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* PWA Install Button */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(76, 175, 80, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        /* Custom Scrollbar */
+        .history-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title">🎲 Lucky Numbers</h1>
+            <p class="subtitle">สุ่มตัวเลขมงคล 6 หลัก</p>
+        </div>
+
+        <!-- Number Display -->
+        <div class="number-display">
+            <div class="digits-container">
+                <div class="digit-slot">
+                    <div class="digit" id="digit0">0</div>
+                </div>
+                <div class="digit-slot">
+                    <div class="digit" id="digit1">0</div>
+                </div>
+                <div class="digit-slot">
+                    <div class="digit" id="digit2">0</div>
+                </div>
+                <div class="digit-slot">
+                    <div class="digit" id="digit3">0</div>
+                </div>
+                <div class="digit-slot">
+                    <div class="digit" id="digit4">0</div>
+                </div>
+                <div class="digit-slot">
+                    <div class="digit" id="digit5">0</div>
+                </div>
+            </div>
+            <div class="result-display">
+                <div class="result-number" id="resultDisplay"></div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="random-button" id="randomBtn" onclick="startRandom()">
+                <span class="button-text">🎰 สุ่มตัวเลข</span>
+            </button>
+            
+            <div class="secondary-controls">
+                <button class="secondary-btn" onclick="resetNumbers()">
+                    🔄 รีเซ็ต
+                </button>
+                <button class="secondary-btn" onclick="copyResult()">
+                    📋 คัดลอก
+                </button>
+                <button class="secondary-btn" onclick="shareResult()">
+                    🔗 แชร์
+                </button>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="history-section">
+            <div class="history-title">
+                📊 ประวัติการสุ่ม
+                <button class="secondary-btn" onclick="clearHistory()" style="margin-left: auto; flex: none; padding: 5px 10px; font-size: 0.8rem;">
+                    🗑️ ลบ
+                </button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div style="text-align: center; opacity: 0.6; padding: 20px;">
+                    ยังไม่มีประวัติการสุ่ม
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PWA Install Button -->
+    <button class="install-prompt" id="installBtn" onclick="installApp()">
+        📱 ติดตั้งแอป
+    </button>
+
+    <script>
+        let isRandomizing = false;
+        let currentNumbers = [0, 0, 0, 0, 0, 0];
+        let history = JSON.parse(localStorage.getItem('luckyNumbersHistory') || '[]');
+        let deferredPrompt;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHistoryDisplay();
+            
+            // Register service worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').catch(console.error);
+            }
+            
+            // PWA install prompt
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                document.getElementById('installBtn').style.display = 'block';
+            });
+        });
+
+        function startRandom() {
+            if (isRandomizing) return;
+            
+            isRandomizing = true;
+            const randomBtn = document.getElementById('randomBtn');
+            randomBtn.disabled = true;
+            randomBtn.innerHTML = '<span class="button-text">🎲 กำลังสุ่ม...</span>';
+            
+            // Add pulse animation
+            randomBtn.style.animation = 'pulse 1s infinite';
+            
+            // Random cycles for each digit (different timing)
+            const cycles = [
+                Math.floor(Math.random() * 30) + 40, // digit 0: 40-70 cycles
+                Math.floor(Math.random() * 30) + 50, // digit 1: 50-80 cycles
+                Math.floor(Math.random() * 30) + 60, // digit 2: 60-90 cycles
+                Math.floor(Math.random() * 30) + 70, // digit 3: 70-100 cycles
+                Math.floor(Math.random() * 30) + 80, // digit 4: 80-110 cycles
+                Math.floor(Math.random() * 30) + 90  // digit 5: 90-120 cycles
+            ];
+            
+            const maxCycles = Math.max(...cycles);
+            let currentCycle = 0;
+            
+            function animateDigits() {
+                // Update each digit that's still spinning
+                for (let i = 0; i < 6; i++) {
+                    if (currentCycle < cycles[i]) {
+                        const digit = document.getElementById(`digit${i}`);
+                        const randomNum = Math.floor(Math.random() * 10);
+                        currentNumbers[i] = randomNum;
+                        digit.textContent = randomNum;
+                        
+                        // Add spinning animation
+                        digit.classList.add('spinning');
+                        setTimeout(() => digit.classList.remove('spinning'), 200);
+                    }
+                }
+                
+                currentCycle++;
+                
+                if (currentCycle < maxCycles) {
+                    // Calculate delay based on progress
+                    const progress = currentCycle / maxCycles;
+                    let delay;
+                    if (progress < 0.3) delay = 50;
+                    else if (progress < 0.6) delay = 100;
+                    else if (progress < 0.85) delay = 200;
+                    else delay = 400;
+                    
+                    setTimeout(animateDigits, delay);
+                } else {
+                    finishRandom();
+                }
+            }
+            
+            animateDigits();
+        }
+
+        function finishRandom() {
+            const result = currentNumbers.join('');
+            document.getElementById('resultDisplay').textContent = `🎉 ${result} 🎉`;
+            
+            // Add to history
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('th-TH', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            history.unshift({
+                number: result,
+                time: timeString,
+                date: now.toLocaleDateString('th-TH')
+            });
+            
+            // Keep only last 20 results
+            if (history.length > 20) {
+                history = history.slice(0, 20);
+            }
+            
+            localStorage.setItem('luckyNumbersHistory', JSON.stringify(history));
+            updateHistoryDisplay();
+            
+            // Reset button
+            const randomBtn = document.getElementById('randomBtn');
+            randomBtn.disabled = false;
+            randomBtn.innerHTML = '<span class="button-text">🎰 สุ่มตัวเลข</span>';
+            randomBtn.style.animation = '';
+            isRandomizing = false;
+            
+            // Add celebration effect
+            celebrateResult();
+        }
+
+        function celebrateResult() {
+            // Add celebration particles (simple version)
+            const container = document.querySelector('.number-display');
+            container.style.animation = 'pulse 0.6s ease-out';
+            setTimeout(() => {
+                container.style.animation = '';
+            }, 600);
+        }
+
+        function resetNumbers() {
+            if (isRandomizing) return;
+            
+            if (confirm('ต้องการรีเซ็ตตัวเลขเป็น 000000 หรือไม่?')) {
+                for (let i = 0; i < 6; i++) {
+                    currentNumbers[i] = 0;
+                    document.getElementById(`digit${i}`).textContent = '0';
+                }
+                document.getElementById('resultDisplay').textContent = '';
+            }
+        }
+
+        function copyResult() {
+            const result = currentNumbers.join('');
+            if (result && result !== '000000') {
+                navigator.clipboard.writeText(result).then(() => {
+                    showNotification('คัดลอกแล้ว! 📋');
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = result;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification('คัดลอกแล้ว! 📋');
+                });
+            } else {
+                showNotification('ยังไม่มีผลลัพธ์ให้คัดลอก', 'error');
+            }
+        }
+
+        function shareResult() {
+            const result = currentNumbers.join('');
+            if (result && result !== '000000') {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Lucky Numbers Generator',
+                        text: `ตัวเลขมงคลของฉัน: ${result}`,
+                        url: window.location.href
+                    });
+                } else {
+                    copyResult();
+                    showNotification('คัดลอกลิงก์แล้ว! 🔗');
+                }
+            } else {
+                showNotification('ยังไม่มีผลลัพธ์ให้แชร์', 'error');
+            }
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            
+            if (history.length === 0) {
+                historyList.innerHTML = `
+                    <div style="text-align: center; opacity: 0.6; padding: 20px;">
+                        ยังไม่มีประวัติการสุ่ม
+                    </div>
+                `;
+                return;
+            }
+            
+            historyList.innerHTML = history.map(item => `
+                <div class="history-item">
+                    <span class="history-number">${item.number}</span>
+                    <span class="history-time">${item.time}</span>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            if (confirm('ต้องการลบประวัติทั้งหมดหรือไม่?')) {
+                history = [];
+                localStorage.removeItem('luckyNumbersHistory');
+                updateHistoryDisplay();
+                showNotification('ลบประวัติแล้ว! 🗑️');
+            }
+        }
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBtn').style.display = 'none';
+                });
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${type === 'error' ? '#f44336' : '#4caf50'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 25px;
+                font-weight: bold;
+                z-index: 10000;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                animation: slideDown 0.5s ease-out;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.5s ease-out reverse';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 3000);
+        }
+
+        // Prevent zoom on double tap (iOS Safari)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' && !isRandomizing) {
+                e.preventDefault();
+                startRandom();
+            } else if (e.code === 'KeyR' && e.ctrlKey) {
+                e.preventDefault();
+                resetNumbers();
+            }
+        });
+    </script>
+</body>
+</html>
