@@ -10,14 +10,27 @@
   "scope": "/",
   "lang": "th",
   "categories": ["games", "utilities", "entertainment"],
+  
+  "prefer_related_applications": false,
+  "related_applications": [],
+  
   "screenshots": [
     {
-      "src": "screenshot1.png",
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAASwCAYAAAAWb8sxAAAACXBIWXMAAAsTAAALEwEAmpwYAAABRmlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8/AwSDJwMfAxSCTmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsisVrZM4er5jVm1p3u3Pnj/3Pn5xL6wNqR0mCsA6H8BUVMLSGBrY2BgqgXSQAYZQJQPZIcApQ2JrUlNAJYhxFsZskJVBjuCBEhNLiouwMBgdkQsYAQhTgOggEQECHE6Ug5FAMQSs8AwwbAQGQWfh7AUwbFaJtA8AAsZgPAAANxKWbEzKBcDvCzXdYCqt7cA",
       "sizes": "540x720",
       "type": "image/png",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "หน้าจอหลักของแอป"
+    },
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5fY51AAAACXBIWXMAAAsTAAALEwEAmpwYAAABRmlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8/AwSDJwMfAxSCTmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsisVrZM4er5jVm1p3u3Pnj/3Pn5xL6wNqR0mCsA6H8BUVMLSGBrY2BgqgXSQAYZQJQPZIcApQ2JrUlNAJYhxFsZskJVBjuCBEhNLiouwMBgdkQsYAQhTgOggEQECHE6Ug5FAMQSs8AwwbAQGQWfh7AUwbFaJtA8AAsZgPAAANxKWbEzKBcDvCzXdYCqt7cA",
+      "sizes": "720x540",
+      "type": "image/png", 
+      "form_factor": "wide",
+      "label": "แอปในโหมดแนวนอน"
     }
   ],
+  
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231a237e'/><stop offset='50%' stop-color='%233949ab'/><stop offset='100%' stop-color='%235c6bc0'/></linearGradient></defs><rect width='192' height='192' fill='url(%23bg)' rx='24'/><text y='130' x='96' text-anchor='middle' font-size='80' fill='%23ffd700'>🎲</text></svg>",
@@ -37,5 +50,17 @@
       "type": "image/svg+xml",
       "purpose": "maskable"
     }
-  ]
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "สุ่มตัวเลข",
+      "short_name": "Random",
+      "description": "สุ่มตัวเลขมงคลทันที",
+      "url": "/?action=random",
+      "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }]
+    }
+  ],
+  
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7"
 }
