@@ -1,9 +1,8 @@
 const CACHE_NAME = 'lucky-numbers-v1.0.0';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/sw.js'
+  './',
+  './index.html',
+  './manifest.json'
 ];
 
 // Install event - cache resources
@@ -87,67 +86,8 @@ self.addEventListener('fetch', (event) => {
           .catch((error) => {
             console.error('Service Worker: Fetch failed', error);
             // Return a custom offline page if available
-            return caches.match('/offline.html');
+            return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
           });
       })
   );
-});
-
-// Background sync for offline functionality
-self.addEventListener('sync', (event) => {
-  console.log('Service Worker: Background sync triggered');
-  if (event.tag === 'background-sync') {
-    event.waitUntil(doBackgroundSync());
-  }
-});
-
-function doBackgroundSync() {
-  console.log('Service Worker: Performing background sync');
-  // Sync any offline data when connection is restored
-  return Promise.resolve();
-}
-
-// Push notification support
-self.addEventListener('push', (event) => {
-  console.log('Service Worker: Push received');
-  if (event.data) {
-    const options = {
-      body: event.data.text(),
-      icon: '/icon-192.png',
-      badge: '/icon-96.png',
-      vibrate: [200, 100, 200],
-      data: {
-        dateOfArrival: Date.now(),
-        primaryKey: 1
-      },
-      actions: [
-        {
-          action: 'explore',
-          title: 'เปิดแอป',
-          icon: '/icon-192.png'
-        },
-        {
-          action: 'close',
-          title: 'ปิด',
-          icon: '/icon-192.png'
-        }
-      ]
-    };
-    
-    event.waitUntil(
-      self.registration.showNotification('Lucky Numbers', options)
-    );
-  }
-});
-
-// Notification click handler
-self.addEventListener('notificationclick', (event) => {
-  console.log('Service Worker: Notification clicked');
-  event.notification.close();
-
-  if (event.action === 'explore') {
-    event.waitUntil(
-      clients.openWindow('/')
-    );
-  }
 });
