@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "Lucky Numbers Generator",
   "short_name": "LuckyNumbers",
   "description": "สุ่มตัวเลขมงคล 6 หลัก พร้อมเอฟเฟ็กต์สวยงาม",
