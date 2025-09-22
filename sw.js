@@ -1,8 +1,8 @@
 const CACHE_NAME = 'lucky-numbers-v1.0.0';
 const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json'
+  '/',
+  '/index.html',
+  '/manifest.json'
 ];
 
 // Install event - cache resources
