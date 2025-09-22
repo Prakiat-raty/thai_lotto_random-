@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Lucky Numbers Generator</title>
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#1a237e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -485,7 +485,7 @@
             // Register service worker for PWA
             if ('serviceWorker' in navigator) {
                 console.log('Registering service worker...');
-                navigator.serviceWorker.register('./sw.js')
+                navigator.serviceWorker.register('/sw.js')
                     .then(function(registration) {
                         console.log('Service Worker registered successfully:', registration.scope);
                         
